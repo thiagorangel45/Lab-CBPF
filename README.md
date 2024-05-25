@@ -1,6 +1,6 @@
 # Aulas de introdução à instrumentação (com ênfase em física experimental de altas energias)
 
-Repositório destinado às aulas de instrumentação no CBPF durante a iniciação científica sob a orientação do professor Gilvan no laboratório lafex no CBPF.
+Repositório destinado às aulas de instrumentação no CBPF durante a iniciação científica sob a orientação do professor Gilvan no laboratório LAFEX no CBPF.
 
 Neste repositório, você encontrará nas seguintes pastas:
 
