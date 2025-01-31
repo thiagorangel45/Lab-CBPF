@@ -20,66 +20,76 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4VisAttributes* worldVis = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));  
     logicWorld->SetVisAttributes(worldVis);
 
-    // Dimensões das Pads e dos espaçadores
+    // Materiais
+    G4Material* padMat = nist->FindOrBuildMaterial("G4_Cu");
+    G4Material* borderMat = nist->FindOrBuildMaterial("G4_Cu");
+
     G4double xPad = 14.0 * cm;
     G4double yPad = 18.0 * cm;
     G4double zPad = 0.5 * cm;
+    G4double borderThickness = 1.0 * cm;
+    G4double cornerSize = 1.0 * cm;
 
-    G4double xSpacer = 1.0 * cm;
-    G4double ySpacer = 1.0 * cm;
-    G4double zSpacer = 0.5 * cm;
+    G4Box* solidPad = new G4Box("Pad", 0.5 * xPad, 0.5 * yPad, 0.5 * zPad);
+    G4LogicalVolume* logicPad = new G4LogicalVolume(solidPad, padMat, "logicPad");
 
-    G4Material* padMat = nist->FindOrBuildMaterial("G4_Cu");
-    G4Material* spacerMat = nist->FindOrBuildMaterial("G4_Li");
+    G4Box* solidBorderX = new G4Box("BorderX", 0.5 * borderThickness, 0.5 * yPad, 0.5 * zPad);
+    G4Box* solidBorderY = new G4Box("BorderY", 0.5 * xPad, 0.5 * borderThickness, 0.5 * zPad);
+    G4LogicalVolume* logicBorderX = new G4LogicalVolume(solidBorderX, borderMat, "logicBorderX");
+    G4LogicalVolume* logicBorderY = new G4LogicalVolume(solidBorderY, borderMat, "logicBorderY");
 
-    // Criar as Pads e Spacers
-    G4Box *solidPad = new G4Box("Pad", 0.5 * xPad, 0.5 * yPad, 0.5 * zPad);
-    G4LogicalVolume *logicPad = new G4LogicalVolume(solidPad, padMat, "logicPad");
+    G4Box* solidCorner = new G4Box("Corner", 0.5 * cornerSize, 0.5 * cornerSize, 0.5 * zPad);
+    G4LogicalVolume* logicCorner = new G4LogicalVolume(solidCorner, borderMat, "logicCorner");
 
-    G4Box *solidSpacerX = new G4Box("SpacerX", 0.5 * xSpacer, 0.5 * yPad, 0.5 * zSpacer);
-    G4LogicalVolume *logicSpacerX = new G4LogicalVolume(solidSpacerX, spacerMat, "logicSpacerX");
-
-    G4Box *solidSpacerY = new G4Box("SpacerY", 0.5 * xPad, 0.5 * ySpacer, 0.5 * zSpacer);
-    G4LogicalVolume *logicSpacerY = new G4LogicalVolume(solidSpacerY, spacerMat, "logicSpacerY");
-
-    // Cores
-    G4VisAttributes* PadVis = new G4VisAttributes(G4Colour(1.0, 0.5, 0.0)); // Laranja
+    G4VisAttributes* PadVis = new G4VisAttributes(G4Colour(1.0, 0.5, 0.0)); 
     logicPad->SetVisAttributes(PadVis);
-    G4VisAttributes* SpacerVis = new G4VisAttributes(G4Colour(0, 1, 0)); // Verde
-    logicSpacerX->SetVisAttributes(SpacerVis);
-    logicSpacerY->SetVisAttributes(SpacerVis);
+    G4VisAttributes* BorderVis = new G4VisAttributes(G4Colour(0, 1, 0)); 
+    logicBorderX->SetVisAttributes(BorderVis);
+    logicBorderY->SetVisAttributes(BorderVis);
+    logicCorner->SetVisAttributes(BorderVis);
 
-    // Dimensões totais do detector
-    G4double totalWidth  = 8 * xPad + 7 * xSpacer;
-    G4double totalHeight = 8 * yPad + 7 * ySpacer;
 
-    // Ajuste para centralizar no mundo
-    G4double xStart = -0.5 * totalWidth;
-    G4double yStart = -0.5 * totalHeight;
-    G4double zStart = 1.0 * cm;  // Mantendo na altura original
+    // Posicionamento da 1 Pad
+    new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicPad, "physPad", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(-0.5 * (xPad + borderThickness), 0, 0), logicBorderX, "physBorderLeft", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * (xPad + borderThickness), 0, 0), logicBorderX, "physBorderRight", logicWorld, false, 1, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0, -0.5 * (yPad + borderThickness), 0), logicBorderY, "physBorderBottom", logicWorld, false, 2, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0, 0.5 * (yPad + borderThickness), 0), logicBorderY, "physBorderTop", logicWorld, false, 3, checkOverlaps);
 
-    // Criar matriz 8x8
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            // Posição das Pads centralizada
-            G4double xPos = xStart + i * (xPad + xSpacer);
-            G4double yPos = yStart + j * (yPad + ySpacer);
-            G4ThreeVector padPosition(xPos, yPos, zStart);
-            new G4PVPlacement(0, padPosition, logicPad, "physPad", logicWorld, false, i * 8 + j, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(-0.5 * (xPad + borderThickness), -0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerBL", logicWorld, false, 4, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * (xPad + borderThickness), -0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerBR", logicWorld, false, 5, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(-0.5 * (xPad + borderThickness), 0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerTL", logicWorld, false, 6, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * (xPad + borderThickness), 0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerTR", logicWorld, false, 7, checkOverlaps);
 
-            // Adicionar espaçadores horizontais (entre Pads no eixo X)
-            if (i < 7) {
-                G4ThreeVector spacerXPos(xPos + 0.5 * xPad + 0.5 * xSpacer, yPos, zStart);
-                new G4PVPlacement(0, spacerXPos, logicSpacerX, "physSpacerX", logicWorld, false, i * 8 + j, checkOverlaps);
-            }
-
-            // Adicionar espaçadores verticais (entre Pads no eixo Y)
-            if (j < 7) {
-                G4ThreeVector spacerYPos(xPos, yPos + 0.5 * yPad + 0.5 * ySpacer, zStart);
-                new G4PVPlacement(0, spacerYPos, logicSpacerY, "physSpacerY", logicWorld, false, i * 8 + j, checkOverlaps);
-            }
-        }
+    for (int i = 1; i < 8; i++)
+    {
+    new G4PVPlacement(0, G4ThreeVector(0, 0.5 * ((2*i) * yPad + (2*i) * borderThickness), 0), logicPad, "physPad", logicWorld, false, 1, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(-0.5 * (xPad + borderThickness), 0.5 * ((2*i + 1) * yPad + (2*i + 1) * borderThickness), 0), logicCorner, "physCornerTL", logicWorld, false, 6, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * (xPad + borderThickness), 0.5 * ((2*i + 1) * yPad + (2*i + 1) * borderThickness), 0), logicCorner, "physCornerTR", logicWorld, false, 7, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(-0.5 * (xPad + borderThickness), 0.5 * ((2*i) * yPad + (2*i) * borderThickness), 0), logicBorderX, "physBorderLeft", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * (xPad + borderThickness), 0.5 * ((2*i) * yPad + (2*i) * borderThickness), 0), logicBorderX, "physBorderRight", logicWorld, false, 1, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0, 0.5 * ((2*i + 1) * yPad + (2*i + 1) * borderThickness), 0), logicBorderY, "physBorderTop", logicWorld, false, 3, checkOverlaps);
     }
+    
+    for (int j = 1; j < 8; j++)
+    {
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j) * xPad + (2*j) * borderThickness), 0, 0), logicPad, "physPad", logicWorld, false, 1, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j) * xPad + (2*j) * borderThickness), 0.5 * (yPad + borderThickness), 0), logicBorderY, "physBorderTop", logicWorld, false, 3, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j + 1) * xPad + (2*j + 1) * borderThickness), 0, 0), logicBorderX, "physBorderLeft", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j) * xPad + (2*j) * borderThickness), -0.5 * (yPad + borderThickness), 0), logicBorderY, "physBorderBottom", logicWorld, false, 2, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j + 1)  * xPad + (2*j + 1)  * borderThickness), -0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerBR", logicWorld, false, 5, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j + 1)  * xPad + (2*j + 1)  * borderThickness), 0.5 * (yPad + borderThickness), 0), logicCorner, "physCornerBR", logicWorld, false, 5, checkOverlaps);
+
+    for (int i =0; i < 7; i++){
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j) * xPad + (2*j) * borderThickness), 0.5 * ((2*i + 2) * yPad + (2*i + 2) * borderThickness), 0), logicPad, "physPad", logicWorld, false, 1, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j) * xPad + (2*j) * borderThickness), 0.5 * ((2*i + 3) * yPad + (2*i + 3) * borderThickness), 0), logicBorderY, "physBorderTop", logicWorld, false, 3, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j + 1) * xPad + (2*j + 1) * borderThickness), 0.5 * ((2*i + 2) * yPad + (2*i + 2) * borderThickness), 0), logicBorderX, "physBorderLeft", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j + 1)  * xPad + (2*j + 1)  * borderThickness), 0.5 * ((2*i + 3) * yPad + (2*i + 3) * borderThickness), 0), logicCorner, "physCornerBR", logicWorld, false, 5, checkOverlaps);
+
+    }
+    }
+
+
 
     return physWorld;
 }
