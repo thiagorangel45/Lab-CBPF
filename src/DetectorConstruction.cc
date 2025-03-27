@@ -1,4 +1,5 @@
 #include "DetectorConstruction.hh"
+#include "SensitiveDetector.hh"
 
 DetectorConstruction::DetectorConstruction() {}
 
@@ -31,7 +32,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4double cornerSize = 1.0 * cm;
 
     G4Box* solidPad = new G4Box("Pad", 0.5 * xPad, 0.5 * yPad, 0.5 * zPad);
-    G4LogicalVolume* logicPad = new G4LogicalVolume(solidPad, padMat, "logicPad");
+    logicPad = new G4LogicalVolume(solidPad, padMat, "logicPad");
 
     G4Box* solidBorderX = new G4Box("BorderX", 0.5 * borderThickness, 0.5 * yPad, 0.5 * zPad);
     G4Box* solidBorderY = new G4Box("BorderY", 0.5 * xPad, 0.5 * borderThickness, 0.5 * zPad);
@@ -71,6 +72,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     new G4PVPlacement(0, G4ThreeVector(0, 0.5 * ((2*i + 1) * yPad + (2*i + 1) * borderThickness), 0), logicBorderY, "physBorderTop", logicWorld, false, 3, checkOverlaps);
     }
     
+    
     for (int j = 1; j < 8; j++)
     {
     new G4PVPlacement(0, G4ThreeVector(0.5 * ((2*j) * xPad + (2*j) * borderThickness), 0, 0), logicPad, "physPad", logicWorld, false, 1, checkOverlaps);
@@ -89,7 +91,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     }
     }
 
-
-
     return physWorld;
+}
+
+
+void DetectorConstruction::ConstructSDandField()
+{
+    SensitiveDetector *sensDet = new SensitiveDetector("SensitiveDetector");
+    logicPad->SetSensitiveDetector(sensDet);
+    G4SDManager::GetSDMpointer()->AddNewDetector(sensDet);
 }

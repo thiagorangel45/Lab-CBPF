@@ -11,12 +11,19 @@
 #include "G4SDManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
+#include "G4Color.hh"         
+#include "G4SDManager.hh"
 
 class DetectorConstruction : public G4VUserDetectorConstruction {
 public:
     DetectorConstruction();
     virtual ~DetectorConstruction();
     virtual G4VPhysicalVolume* Construct() override;
+
+private:
+    G4LogicalVolume* logicPad;
+    virtual void ConstructSDandField();
+
 };
 
 #endif
