@@ -1,7 +1,0 @@
-/run/initialize
-/vis/open OGL
-/vis/drawVolume
-/vis/scene/add/trajectories smooth
-/vis/scene/endOfEventAction accumulate
-/vis/viewer/set/viewpointThetaPhi 60 45
-/vis/viewer/zoom 1.2

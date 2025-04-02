@@ -1,4 +1,0 @@
-/Users/thiagorangel/UERJ/geant_workspace/RPC_Simulation/build/CMakeFiles/rpc_sim.dir
-/Users/thiagorangel/UERJ/geant_workspace/RPC_Simulation/build/CMakeFiles/RPC_Simulation.dir
-/Users/thiagorangel/UERJ/geant_workspace/RPC_Simulation/build/CMakeFiles/edit_cache.dir
-/Users/thiagorangel/UERJ/geant_workspace/RPC_Simulation/build/CMakeFiles/rebuild_cache.dir
