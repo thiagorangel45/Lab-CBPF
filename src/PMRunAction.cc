@@ -14,13 +14,6 @@ PMRunAction::PMRunAction()
     analysisManager->CreateNtupleDColumn("fGlobalTime");
     analysisManager->CreateNtupleDColumn("fWlen");
     analysisManager->FinishNtuple(0);
-
-    analysisManager->CreateNtuple("Detector");
-    analysisManager->CreateNtupleIColumn("Number of Hits");
-    analysisManager->CreateNtupleIColumn("Total Number of Hits");
-    analysisManager->CreateNtupleDColumn("Integrated Charge");
-    analysisManager->CreateNtupleDColumn("Total Integrated Charge");
-    analysisManager->FinishNtuple(1);
 }
 
 PMRunAction::~PMRunAction()
@@ -36,7 +29,7 @@ void PMRunAction::BeginOfRunAction(const G4Run *run)
     std::stringstream strRunID;
     strRunID << runID;
 
-    analysisManager->OpenFile("output" + strRunID.str() + ".root");
+    analysisManager->OpenFile("output.root");
 }
 
 void PMRunAction::EndOfRunAction(const G4Run *run)
