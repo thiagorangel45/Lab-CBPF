@@ -1,25 +1,17 @@
 #include "PMPrimaryGenerator.hh"
+#include "Randomize.hh"  // Biblioteca do Geant4 para geração de números aleatórios
 
 PMPrimaryGenerator::PMPrimaryGenerator()
 {
     fParticleGun = new G4ParticleGun(1);
 
-    // Particle position
+    // Particle position (fixa)
     G4double x = 0. * m;
     G4double y = 0. * m;
-    G4double z = 1. * m;
-
+    G4double z = 0.5 * m;
     G4ThreeVector pos(x, y, z);
 
-    // Particle direction
-    G4double px = 0.;
-    G4double py = 0.;
-    G4double pz = 0.;
-
-    G4ThreeVector mom(px, py, pz);
-
     fParticleGun->SetParticlePosition(pos);
-    fParticleGun->SetParticleMomentumDirection(mom);
 }
 
 PMPrimaryGenerator::~PMPrimaryGenerator()
@@ -29,18 +21,23 @@ PMPrimaryGenerator::~PMPrimaryGenerator()
 
 void PMPrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
-    // Particle type
-    G4int Z = 9;
-    G4int A = 18;
+    // Partícula
+    G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle("mu-");
+    fParticleGun->SetParticleDefinition(particle);
 
-    G4double charge = 0. * eplus;
-    G4double energy = 0. * keV;
+    // Energia fixa
+    fParticleGun->SetParticleEnergy(100. * MeV);
 
-    G4ParticleDefinition *ion  = G4IonTable::GetIonTable()->GetIon(Z, A, energy);
-    fParticleGun->SetParticleDefinition(ion);
-    fParticleGun->SetParticleCharge(charge);
-    fParticleGun->SetParticleEnergy(energy);
+    // Gera direção de momento aleatória normalizada
+    G4double px = G4RandFlat::shoot(-1.0, 1.0);
+    G4double py = G4RandFlat::shoot(-1.0, 1.0);
+    G4double pz = G4RandFlat::shoot(-1.0, 1.0);
 
-    // Create vertex
+    G4ThreeVector mom(px, py, pz);
+    mom = mom.unit();  // Normaliza o vetor para ter módulo 1
+
+    fParticleGun->SetParticleMomentumDirection(mom);
+
+    // Gera o vértice primário
     fParticleGun->GeneratePrimaryVertex(anEvent);
 }

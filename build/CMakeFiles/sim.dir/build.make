@@ -225,7 +225,7 @@ sim: /usr/local/opt/qt@5/lib/QtGui.framework/QtGui
 sim: /usr/local/opt/qt@5/lib/QtCore.framework/QtCore
 sim: /usr/local/lib/libxerces-c.dylib
 sim: /Users/thiagorangel/Softwares/Geant4/geant4-install/lib/libG4analysis.dylib
-sim: /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk/usr/lib/libexpat.tbd
+sim: /Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk/usr/lib/libexpat.tbd
 sim: /Users/thiagorangel/Softwares/Geant4/geant4-install/lib/libG4zlib.dylib
 sim: /Users/thiagorangel/Softwares/Geant4/geant4-install/lib/libG4intercoms.dylib
 sim: /Users/thiagorangel/Softwares/Geant4/geant4-install/lib/libG4global.dylib

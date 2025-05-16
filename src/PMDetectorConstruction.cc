@@ -23,24 +23,6 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "physWorld", 0, false, 0, checkOverlaps);
     G4VisAttributes* worldVis = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); 
     logicWorld->SetVisAttributes(worldVis);
-
-    G4Isotope *F18 = new G4Isotope("F18", 9, 18, 18.000938 * g / mole);
-    G4Element *elF18 = new G4Element("Fluorine-18", "F18", 1);
-    elF18->AddIsotope(F18, 100.0 * perCent);
-    G4Material *matF18 = new G4Material("F18Source", 1.51 * g / cm3, 1);
-    matF18->AddElement(elF18, 100.0 * perCent); 
-
-    G4double sourceRadius = 10. * cm; 
-    G4Sphere *solidSource = new G4Sphere("solidSource", 0.0, sourceRadius, 0.0, 360. * deg, 0.0, 180. * deg);
-    G4LogicalVolume *logicSource = new G4LogicalVolume(solidSource, matF18, "logicSource");
-    G4VPhysicalVolume* physSource = new G4PVPlacement(0, G4ThreeVector(0, 0, 1 *m), logicSource, "physSource", logicWorld, false, 0, checkOverlaps);
-
-    G4VisAttributes *sourceVisAtt = new G4VisAttributes(G4Colour(1.0, 1.0, 0.0)); 
-    sourceVisAtt->SetVisibility(true);
-    sourceVisAtt->SetForceSolid(true);
-    sourceVisAtt->SetForceAuxEdgeVisible(true); 
-    logicSource->SetVisAttributes(sourceVisAtt);
-    
     
     G4Material* padMat = nist->FindOrBuildMaterial("G4_Cu");
     G4Material* borderMat = nist->FindOrBuildMaterial("G4_Cu"); 
@@ -114,75 +96,75 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
         }
     }
     
-// Alumínio
-G4Material* aluminium = nist->FindOrBuildMaterial("G4_Al");
-G4double aluSizeX = 128.5 * cm / 2;
-G4double aluSizeY = 165.0 * cm / 2;
-G4double aluSizeZ = 2.5 * cm / 2;
+    // Alumínio
+    G4Material* aluminium = nist->FindOrBuildMaterial("G4_Al");
+    G4double aluSizeX = 128.5 * cm / 2;
+    G4double aluSizeY = 165.0 * cm / 2;
+    G4double aluSizeZ = 2.5 * cm / 2;
 
-G4Box* solidLayer = new G4Box("AlLayer", aluSizeX, aluSizeY, aluSizeZ);
-G4LogicalVolume* logicLayer = new G4LogicalVolume(solidLayer, aluminium, "AlLayerLV");
-logicLayer->SetVisAttributes(new G4VisAttributes(G4Colour(0.7, 0.7, 0.7))); // Cinza claro
+    G4Box* solidLayer = new G4Box("AlLayer", aluSizeX, aluSizeY, aluSizeZ);
+    G4LogicalVolume* logicLayer = new G4LogicalVolume(solidLayer, aluminium, "AlLayerLV");
+    logicLayer->SetVisAttributes(new G4VisAttributes(G4Colour(0.7, 0.7, 0.7))); // Cinza claro
 
-G4ThreeVector aluPos = G4ThreeVector(0, 0, 2.5 * cm);
-new G4PVPlacement(nullptr, aluPos, logicLayer, "AlLayerPV", logicWorld, false, 0, true);
+    G4ThreeVector aluPos = G4ThreeVector(0, 0, 2.5 * cm);
+    new G4PVPlacement(nullptr, aluPos, logicLayer, "AlLayerPV", logicWorld, false, 0, true);
 
-// Acrílico
-G4Material* acrylic = nist->FindOrBuildMaterial("G4_PLEXIGLASS");
-G4double acrylicSizeX = 125.0 * cm / 2;
-G4double acrylicSizeY = 155.0 * cm / 2;
-G4double acrylicSizeZ = 1.0  * cm / 2;
+    // Acrílico
+    G4Material* acrylic = nist->FindOrBuildMaterial("G4_PLEXIGLASS");
+    G4double acrylicSizeX = 125.0 * cm / 2;
+    G4double acrylicSizeY = 155.0 * cm / 2;
+    G4double acrylicSizeZ = 1.0  * cm / 2;
 
-G4Box* solidAcrylicBox = new G4Box("AcrylicBox", acrylicSizeX, acrylicSizeY, acrylicSizeZ);
-G4LogicalVolume* logicAcrylicBox = new G4LogicalVolume(solidAcrylicBox, acrylic, "AcrylicBoxLV");
-logicAcrylicBox->SetVisAttributes(new G4VisAttributes(G4Colour(0.2, 0.6, 0.9))); // Azul claro
+    G4Box* solidAcrylicBox = new G4Box("AcrylicBox", acrylicSizeX, acrylicSizeY, acrylicSizeZ);
+    G4LogicalVolume* logicAcrylicBox = new G4LogicalVolume(solidAcrylicBox, acrylic, "AcrylicBoxLV");
+    logicAcrylicBox->SetVisAttributes(new G4VisAttributes(G4Colour(0.2, 0.6, 0.9))); // Azul claro
 
-G4ThreeVector acrylicPos = G4ThreeVector(0, 0, -5 * cm);
-new G4PVPlacement(nullptr, acrylicPos, logicAcrylicBox, "AcrylicBoxPV", logicWorld, false, 0, true);
+    G4ThreeVector acrylicPos = G4ThreeVector(0, 0, -5 * cm);
+    new G4PVPlacement(nullptr, acrylicPos, logicAcrylicBox, "AcrylicBoxPV", logicWorld, false, 0, true);
 
-// Grafite
-G4Material* graphite = nist->FindOrBuildMaterial("G4_GRAPHITE");
-G4double graphiteSizeX = 119.0 * cm / 2;
-G4double graphiteSizeY = 148.5 * cm / 2;
-G4double graphiteSizeZ = 1.0   * cm / 2;
+    // Grafite
+    G4Material* graphite = nist->FindOrBuildMaterial("G4_GRAPHITE");
+    G4double graphiteSizeX = 119.0 * cm / 2;
+    G4double graphiteSizeY = 148.5 * cm / 2;
+    G4double graphiteSizeZ = 1.0   * cm / 2;
 
-G4Box* solidGraphiteBox = new G4Box("GraphiteBox", graphiteSizeX, graphiteSizeY, graphiteSizeZ);
-G4LogicalVolume* logicGraphiteBox = new G4LogicalVolume(solidGraphiteBox, graphite, "GraphiteBoxLV");
-logicGraphiteBox->SetVisAttributes(new G4VisAttributes(G4Colour(0.3, 0.3, 0.3))); // Grafite escuro
+    G4Box* solidGraphiteBox = new G4Box("GraphiteBox", graphiteSizeX, graphiteSizeY, graphiteSizeZ);
+    G4LogicalVolume* logicGraphiteBox = new G4LogicalVolume(solidGraphiteBox, graphite, "GraphiteBoxLV");
+    logicGraphiteBox->SetVisAttributes(new G4VisAttributes(G4Colour(0.3, 0.3, 0.3))); // Grafite escuro
 
-G4ThreeVector graphitePos = G4ThreeVector(0, 0, -10 * cm);
-new G4PVPlacement(nullptr, graphitePos, logicGraphiteBox, "GraphiteBoxPV", logicWorld, false, 0, true);
+    G4ThreeVector graphitePos = G4ThreeVector(0, 0, -10 * cm);
+    new G4PVPlacement(nullptr, graphitePos, logicGraphiteBox, "GraphiteBoxPV", logicWorld, false, 0, true);
 
-// Vidro
-G4Material* glass = nist->FindOrBuildMaterial("G4_GLASS_PLATE");
-G4double glassSizeX = 120.0 * cm / 2;
-G4double glassSizeY = 152.0 * cm / 2;
-G4double glassSizeZ = 0.2   * cm / 2;
+    // Vidro
+    G4Material* glass = nist->FindOrBuildMaterial("G4_GLASS_PLATE");
+    G4double glassSizeX = 120.0 * cm / 2;
+    G4double glassSizeY = 152.0 * cm / 2;
+    G4double glassSizeZ = 0.2   * cm / 2;
 
-G4Box* solidGlassBox = new G4Box("GlassBox", glassSizeX, glassSizeY, glassSizeZ);
-G4LogicalVolume* logicGlassBox = new G4LogicalVolume(solidGlassBox, glass, "GlassBoxLV");
-logicGlassBox->SetVisAttributes(new G4VisAttributes(G4Colour(0.8, 1.0, 1.0))); // Ciano bem claro
+    G4Box* solidGlassBox = new G4Box("GlassBox", glassSizeX, glassSizeY, glassSizeZ);
+    G4LogicalVolume* logicGlassBox = new G4LogicalVolume(solidGlassBox, glass, "GlassBoxLV");
+    logicGlassBox->SetVisAttributes(new G4VisAttributes(G4Colour(0.8, 1.0, 1.0))); // Ciano bem claro
 
-G4ThreeVector glassPos = G4ThreeVector(0, 0, -15 * cm);
-new G4PVPlacement(nullptr, glassPos, logicGlassBox, "GlassBoxPV", logicWorld, false, 0, true);
+    G4ThreeVector glassPos = G4ThreeVector(0, 0, -15 * cm);
+    new G4PVPlacement(nullptr, glassPos, logicGlassBox, "GlassBoxPV", logicWorld, false, 0, true);
 
-G4ThreeVector glassPos2 = G4ThreeVector(0, 0, -20 * cm);
-new G4PVPlacement(nullptr, glassPos2, logicGlassBox, "GlassBoxPV2", logicWorld, false, 0, true);
+    G4ThreeVector glassPos2 = G4ThreeVector(0, 0, -20 * cm);
+    new G4PVPlacement(nullptr, glassPos2, logicGlassBox, "GlassBoxPV2", logicWorld, false, 0, true);
 
-G4ThreeVector glassPos3 = G4ThreeVector(0, 0, -25 * cm);
-new G4PVPlacement(nullptr, glassPos3, logicGlassBox, "GlassBoxPV3", logicWorld, false, 0, true);
+    G4ThreeVector glassPos3 = G4ThreeVector(0, 0, -25 * cm);
+    new G4PVPlacement(nullptr, glassPos3, logicGlassBox, "GlassBoxPV3", logicWorld, false, 0, true);
 
-// Segunda camada de grafite
-G4ThreeVector graphitePos2 = G4ThreeVector(0, 0, -30 * cm);
-new G4PVPlacement(nullptr, graphitePos2, logicGraphiteBox, "GraphiteBoxPV2", logicWorld, false, 0, true);
+    // Segunda camada de grafite
+    G4ThreeVector graphitePos2 = G4ThreeVector(0, 0, -30 * cm);
+    new G4PVPlacement(nullptr, graphitePos2, logicGraphiteBox, "GraphiteBoxPV2", logicWorld, false, 0, true);
 
-// Segunda camada de acrílico
-G4ThreeVector acrylicPos2 = G4ThreeVector(0, 0, -35 * cm);
-new G4PVPlacement(nullptr, acrylicPos2, logicAcrylicBox, "AcrylicBoxPV2", logicWorld, false, 0, true);
+    // Segunda camada de acrílico
+    G4ThreeVector acrylicPos2 = G4ThreeVector(0, 0, -35 * cm);
+    new G4PVPlacement(nullptr, acrylicPos2, logicAcrylicBox, "AcrylicBoxPV2", logicWorld, false, 0, true);
 
-// Segunda camada de aluminio
-G4ThreeVector aluPos2 = G4ThreeVector(0, 0, -40 * cm);
-new G4PVPlacement(nullptr, aluPos2, logicLayer, "AlLayerPV", logicWorld, false, 0, true);
+    // Segunda camada de aluminio
+    G4ThreeVector aluPos2 = G4ThreeVector(0, 0, -40 * cm);
+    new G4PVPlacement(nullptr, aluPos2, logicLayer, "AlLayerPV", logicWorld, false, 0, true);
 
     return physWorld;
 }

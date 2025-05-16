@@ -1,26 +1,27 @@
-#ifndef PMSENSITIVEDETECTOR_HH
-#define PMSENSITIVEDETECTOR_HH
+#ifndef PMSensitiveDetector_h
+#define PMSensitiveDetector_h 1
 
 #include "G4VSensitiveDetector.hh"
+#include "globals.hh"
+#include <vector>
 
-#include "G4RunManager.hh"
-#include "G4AnalysisManager.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4UnitsTable.hh"
+class G4Step;
+class G4TouchableHistory;
 
 class PMSensitiveDetector : public G4VSensitiveDetector
 {
 public:
-    PMSensitiveDetector(G4String);
-    ~PMSensitiveDetector();
+    PMSensitiveDetector(G4String name);
+    virtual ~PMSensitiveDetector();
+
+    virtual void Initialize(G4HCofThisEvent* hitCollection) override;
+    virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* history) override;
+    virtual void EndOfEvent(G4HCofThisEvent* hitCollection) override;
 
 private:
-    virtual G4bool ProcessHits(G4Step *, G4TouchableHistory *);
-
-    virtual void Initialize(G4HCofThisEvent*) override;
-    virtual void EndOfEvent(G4HCofThisEvent *) override;
-
     G4double fTotalEnergyDeposited;
+    std::vector<G4int> fHitsPerPad;
+    std::vector<G4double> fEdepPerPad;
 };
 
 #endif
