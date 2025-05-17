@@ -14,15 +14,19 @@ G4VPhysicalVolume *PMDetectorConstruction::Construct()
     G4NistManager *nist  = G4NistManager::Instance();
 
     G4Material* worldMat = nist->FindOrBuildMaterial("G4_AIR");
-    G4double xWorld = 10. * m;
-    G4double yWorld = 10. * m;
-    G4double zWorld = 10. * m;
+    G4double rWorld = 10. * m;
+    G4Sphere* solidWorld = new G4Sphere("World", 
+                                        0.,         // raio interno (0 para esfera cheia)
+                                        rWorld,     // raio externo
+                                        0., 2 * CLHEP::pi,   // ângulo phi (0 a 2π)
+                                        0., CLHEP::pi);      // ângulo theta (0 a π)
 
-    G4Box* solidWorld = new G4Box("World", xWorld, yWorld, zWorld);
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
-    G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "physWorld", 0, false, 0, checkOverlaps);
-    G4VisAttributes* worldVis = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); 
+    G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, 
+                                                    "physWorld", 0, false, 0, checkOverlaps);
+    G4VisAttributes* worldVis = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5));
     logicWorld->SetVisAttributes(worldVis);
+    
     
     G4Material* padMat = nist->FindOrBuildMaterial("G4_Cu");
     G4Material* borderMat = nist->FindOrBuildMaterial("G4_Cu"); 
